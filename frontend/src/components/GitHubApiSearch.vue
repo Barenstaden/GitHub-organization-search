@@ -98,7 +98,7 @@
 
           <!-- Starred by members of organization -->
           <b-col class="mt-5">
-            <h3>Starred by members of {{ organization.name }}</h3>
+            <h3>Starred by some members of {{ organization.name }}</h3>
             <b-list-group>
               <b-list-group-item
                 v-for="(repo, index) in memberStarredRepositories"
@@ -130,7 +130,7 @@
         <b-col md="6">
           <!-- Belongs to members of organization -->
           <b-col class="mt-5">
-            <h3>Belongs to members of {{ organization.name }}</h3>
+            <h3>Belongs to some members of {{ organization.name }}</h3>
             <b-list-group>
               <b-list-group-item
                 v-for="(repo, index) in memberRepositories"
