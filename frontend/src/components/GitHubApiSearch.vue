@@ -37,7 +37,10 @@
     </b-container>
 
     <!-- Organization -->
-    <b-container class="mt-5 text-left" v-if="organization && !loading">
+    <b-container
+      class="mt-5 text-left"
+      v-if="organization && !loading && !error"
+    >
       <!-- Info -->
       <b-row id="organizationInfo">
         <b-col md="3" offset-md="2">

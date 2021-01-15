@@ -2,11 +2,11 @@ const express = require("express");
 const app = express();
 const g = require("graphql-request");
 const { GraphQLClient, gql } = g;
-
+require("dotenv").config();
 const port = 3001;
 const url = "https://api.github.com/graphql";
 
-const TOKEN = "618dff28c26c857c353dc7f38d556fe9d7e18b7a";
+const TOKEN = process.env.TOKEN;
 
 const graphQLClient = new GraphQLClient(url, {
   headers: {
@@ -82,6 +82,7 @@ app.get("/related_repositories", async (req, res) => {
       });
       res.json(data);
     } catch (error) {
+      console.log(error);
       res.json({ organization: false });
     }
   }
