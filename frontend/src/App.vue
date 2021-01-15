@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <GitHubApiSearch msg="Welcome to Your Vue.js App" />
+    <GitHubApiSearch />
   </div>
 </template>
 
