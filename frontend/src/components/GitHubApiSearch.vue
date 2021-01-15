@@ -69,93 +69,21 @@
           <!-- Organization repositories -->
           <b-col class="mt-5">
             <h3>Top ten that belongs to {{ organization.name }}</h3>
-            <b-list-group>
-              <b-list-group-item
-                v-for="repo in organizationRepositories"
-                :key="repo.name"
-                class="d-flex justify-content-between align-items-center"
-              >
-                <a :href="repo.url" target="_blank"
-                  >{{ repo.name }}
-                  <b-img
-                    :src="repo.owner.avatarUrl"
-                    rounded="circle"
-                    v-bind="avatarProps"
-                    :alt="repo.owner.name"
-                  ></b-img
-                ></a>
-                <span>
-                  <b-badge variant="primary" rigth pill
-                    >Starred {{ repo.stargazerCount }}</b-badge
-                  >
-                  <b-badge variant="primary" right pill
-                    >Watched {{ repo.watchers.totalCount }}</b-badge
-                  >
-                </span>
-              </b-list-group-item>
-            </b-list-group>
+            <RepoList :repos="organizationRepositories" />
           </b-col>
 
           <!-- Starred by members of organization -->
           <b-col class="mt-5">
-            <h3>Starred by some members of {{ organization.name }}</h3>
-            <b-list-group>
-              <b-list-group-item
-                v-for="(repo, index) in memberStarredRepositories"
-                :key="index"
-                class="d-flex justify-content-between align-items-center"
-              >
-                <a :href="repo.url" target="_blank"
-                  >{{ repo.name }}
-                  <b-img
-                    :src="repo.owner.avatarUrl"
-                    rounded="circle"
-                    v-bind="avatarProps"
-                    :alt="repo.owner.name"
-                  ></b-img
-                ></a>
-                <span>
-                  <b-badge variant="primary" rigth pill
-                    >Starred {{ repo.stargazerCount }}</b-badge
-                  >
-                  <b-badge variant="primary" right pill
-                    >Watched {{ repo.watchers.totalCount }}</b-badge
-                  >
-                </span>
-              </b-list-group-item>
-            </b-list-group>
+            <h3>Starred by members of {{ organization.name }}</h3>
+            <RepoList :repos="memberStarredRepositories" />
           </b-col>
         </b-col>
 
         <b-col md="6">
           <!-- Belongs to members of organization -->
           <b-col class="mt-5">
-            <h3>Belongs to some members of {{ organization.name }}</h3>
-            <b-list-group>
-              <b-list-group-item
-                v-for="(repo, index) in memberRepositories"
-                :key="index"
-                class="d-flex justify-content-between align-items-center"
-              >
-                <a :href="repo.url" target="_blank"
-                  >{{ repo.name }}
-                  <b-img
-                    :src="repo.owner.avatarUrl"
-                    rounded="circle"
-                    v-bind="avatarProps"
-                    :alt="repo.owner.name"
-                  ></b-img
-                ></a>
-                <span>
-                  <b-badge variant="primary" rigth pill
-                    >Starred {{ repo.stargazerCount }}</b-badge
-                  >
-                  <b-badge variant="primary" right pill
-                    >Watched {{ repo.watchers.totalCount }}</b-badge
-                  >
-                </span>
-              </b-list-group-item>
-            </b-list-group>
+            <h3>Belongs to members of {{ organization.name }}</h3>
+            <RepoList :repos="memberRepositories" />
           </b-col>
         </b-col>
       </b-row>
@@ -170,11 +98,13 @@
 
 <script>
 import { VclList } from "vue-content-loading";
+import RepoList from "@/components/RepoList.vue";
 import axios from "axios";
 export default {
   name: "GitHubApiSearch",
   components: {
     VclList,
+    RepoList,
   },
   data() {
     return {
@@ -183,7 +113,6 @@ export default {
       search: "",
       organization: null,
       largeImageProps: { width: 150, height: 150 },
-      avatarProps: { width: 25, height: 25 },
     };
   },
   methods: {
@@ -212,14 +141,17 @@ export default {
     containsInfo(htmlText) {
       return htmlText.length > 10;
     },
+    calculateTotals(repo1, repo2, order) {
+      const a = repo1.watchers.totalCount + repo1.stargazerCount;
+      const b = repo2.watchers.totalCount + repo2.stargazerCount;
+      if (order == "desc") return b - a;
+      if (order == "asc") return a - b;
+    },
   },
   computed: {
     organizationRepositories() {
       return this.organization.repositories.nodes.concat().sort((a, b) => {
-        return (
-          b.watchers.totalCount - a.watchers.totalCount ||
-          b.stargazerCount - a.stargazerCount
-        );
+        return this.calculateTotals(a, b, "desc");
       });
     },
     memberRepositories() {
@@ -232,10 +164,7 @@ export default {
           return repos;
         }, []);
       return repositories.sort((a, b) => {
-        return (
-          b.watchers.totalCount - a.watchers.totalCount ||
-          b.stargazerCount - a.stargazerCount
-        );
+        return this.calculateTotals(a, b, "desc");
       });
     },
     memberStarredRepositories() {
@@ -250,10 +179,7 @@ export default {
       );
 
       return repositories.sort((a, b) => {
-        return (
-          b.watchers.totalCount - a.watchers.totalCount ||
-          b.stargazerCount - a.stargazerCount
-        );
+        return this.calculateTotals(a, b, "desc");
       });
     },
   },
