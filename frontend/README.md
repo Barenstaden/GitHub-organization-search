@@ -1,4 +1,4 @@
-# skalar
+# GitHub Organization Search
 
 ## Project setup
 ```

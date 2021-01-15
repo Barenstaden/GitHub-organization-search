@@ -4,7 +4,10 @@
       <b-row class="mt-5">
         <b-col>
           <form id="searchForm" @submit.prevent="submitSearch">
-            <h3>Search for an organization on GitHub</h3>
+            <h3>
+              Search for an organization on
+              <b-icon-github></b-icon-github>
+            </h3>
             <div class="mt-3">
               <input v-model="search" type="text" />
               <button type="submit">Search</button>
@@ -16,6 +19,7 @@
       <!-- Loading -->
       <b-row class="mt-5 text-left" v-if="loading">
         <b-col md="6" offset-md="3">
+          <h3>Feel free to spin in your chair...</h3>
           <b-col class="mt-5 text-left" sm="12">
             <vcl-list width="500" secondary="#AED1DE"></vcl-list>
           </b-col>
@@ -61,6 +65,12 @@
           <a :href="organization.websiteUrl" target="_blank"
             >Read more about {{ organization.name }}</a
           >
+        </b-col>
+      </b-row>
+
+      <b-row>
+        <b-col class="text-center mt-5">
+          <h1>Repositories</h1>
         </b-col>
       </b-row>
 
