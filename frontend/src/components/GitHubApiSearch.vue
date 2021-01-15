@@ -1,6 +1,6 @@
 <template>
   <div id="gitHubSearch">
-    <b-container class="mt-5">
+    <b-container class="mt-5 mb-5">
       <b-row class="mt-5">
         <b-col>
           <form id="searchForm" @submit.prevent="submitSearch">
@@ -28,9 +28,7 @@
       <b-row class="mt-5 text-left" v-if="!loading && error">
         <b-col md="6" offset-md="3">
           <h3>
-            I´ve talked to GitHub and they wanted me to inform you that "{{
-              this.search
-            }}" is an organization they dont want to be associated with.
+            {{ error }}
           </h3>
         </b-col>
       </b-row>
@@ -38,7 +36,7 @@
 
     <!-- Organization -->
     <b-container
-      class="mt-5 text-left"
+      class="mt-5 pb-5 text-left"
       v-if="organization && !loading && !error"
     >
       <!-- Info -->
@@ -161,6 +159,11 @@
           </b-col>
         </b-col>
       </b-row>
+      <b-row class="mt-5">
+        <b-col>
+          <h3 class="text-center">That´s it for now</h3>
+        </b-col>
+      </b-row>
     </b-container>
   </div>
 </template>
@@ -185,6 +188,7 @@ export default {
   },
   methods: {
     async submitSearch() {
+      if (!this.search) return;
       this.loading = true;
       const response = await axios.get("/api/related_repositories", {
         params: {
@@ -197,9 +201,12 @@ export default {
         this.memberReposLimit = 10;
         this.memberStarredReposLimit = 10;
         this.organization = response.data.organization;
+      } else if (response.data.error) {
+        this.loading = false;
+        this.error = response.data.error;
       } else {
         this.loading = false;
-        this.error = true;
+        this.error = "Everything went wrong.";
       }
     },
     containsInfo(htmlText) {

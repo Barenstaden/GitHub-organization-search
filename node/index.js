@@ -74,7 +74,12 @@ const query = gql`
 
 app.get("/related_repositories", async (req, res) => {
   if (!req.query.search) {
-    res.send("Missing input");
+    res.send({ error: "Missing input" });
+  } else if (!TOKEN) {
+    res.send({
+      error:
+        'Token not set. Create a .env file in the node folder and set TOKEN=""',
+    });
   } else {
     try {
       const data = await graphQLClient.request(query, {
@@ -83,7 +88,9 @@ app.get("/related_repositories", async (req, res) => {
       res.json(data);
     } catch (error) {
       console.log(error);
-      res.json({ organization: false });
+      res.json({
+        error: `I´ve talked to GitHub and they wanted me to inform you that "${req.query.search}" is an organization they dont want to be associated with.`,
+      });
     }
   }
 });
